@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CentralBank.DataAccess.Abstracts
 {
-    internal interface IValuteDal
+    public interface IValuteDal
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CentralBank.DataAccess.Abstracts
 {
-    internal interface IValCursDal
+    public interface IValCursDal
     {
     }
 }
