@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Concretes\" />
+    <ProjectReference Include="..\CentralBank.Core\CentralBank.Core.csproj" />
+    <ProjectReference Include="..\CentralBank.Entities\CentralBank.Entities.csproj" />
   </ItemGroup>
 
 </Project>
