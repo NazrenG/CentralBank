@@ -1,0 +1,6 @@
+@CentralBank.WepApi_HostAddress = http://localhost:5025
+
+GET {{CentralBank.WepApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
