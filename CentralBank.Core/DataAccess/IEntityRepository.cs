@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CentralBank.Core.DataAccess
 {
     public interface IEntityRepository<T> where T : class,IEntity,new()
-    {
+    {///Helllooooo
         Task<T> Get(Expression<Func<T, bool>> filter);
         Task<List<T>> GetList(Expression<Func<T, bool>> filter = null);
 
