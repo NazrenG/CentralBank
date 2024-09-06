@@ -17,6 +17,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CentralBank.DataAccess\CentralBank.DataAccess.csproj" />
+    <ProjectReference Include="..\CentralBank.Entities\CentralBank.Entities.csproj" />
   </ItemGroup>
 
 </Project>

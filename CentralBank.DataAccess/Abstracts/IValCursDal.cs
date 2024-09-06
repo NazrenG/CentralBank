@@ -10,5 +10,6 @@ namespace CentralBank.DataAccess.Abstracts
 {
     public interface IValCursDal:IEntityRepository<ValCurs>
     {
+       
     }
 }

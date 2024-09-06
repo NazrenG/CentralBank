@@ -1,3 +1,10 @@
+using CentralBank.Business.Abstracts;
+using CentralBank.Business.Concretes;
+using CentralBank.DataAccess.Abstracts;
+using CentralBank.DataAccess.Concretes;
+using CentralBank.Entities.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +14,36 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+
+builder.Services.AddHttpClient<CurrencyService>();
+builder.Services.AddHostedService<FetchCurrencyService>();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
+
+
+
+builder.Services.AddScoped<IValuteDal, ValuteDal>();
+builder.Services.AddScoped<IValuteService, ValuteService>();
+
+builder.Services.AddScoped<IValCursDal, ValCursDal>();
+builder.Services.AddScoped<IValCursService, ValCursService>();
+
+builder.Services.AddScoped<IValTypeDal, ValTypeDal>();
+builder.Services.AddScoped<IValTypeService, ValTypeService>();  
+
+var conn = builder.Configuration.GetConnectionString("Default");
+builder.Services.AddDbContext<CentralBankDbContext>(opt =>
+{
+    opt.UseSqlServer(conn);
+});
+
+
+
+//builder.Services.AddHttpClient<IhttpCL>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -13,6 +13,13 @@ namespace CentralBank.Entities.Data
         public CentralBankDbContext(DbContextOptions options) : base(options)
         {
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseLazyLoadingProxies();
+            }
+        }
         public DbSet<Root> Roots { get; set; }
         public DbSet<ValCurs> ValCurs { get; set; }
         public DbSet<ValType> ValTypes { get; set; }

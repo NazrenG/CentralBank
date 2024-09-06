@@ -9,6 +9,7 @@ namespace CentralBank.Entities.Models
 {
     public class Root:IEntity
     {
+        public int Id { get; set; }
         public ValCurs ValCurs { get; set; }
     }
 }
