@@ -3,6 +3,8 @@ using CentralBank.Business.Concretes;
 using CentralBank.DataAccess.Abstracts;
 using CentralBank.DataAccess.Concretes;
 using CentralBank.Entities.Data;
+using CentralBank.WepApi.Formatters;
+using CentralBank.WepApi.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,10 +43,16 @@ builder.Services.AddDbContext<CentralBankDbContext>(opt =>
     opt.UseSqlServer(conn);
 });
 
+builder.Services.AddControllers(opt =>
+{
+    opt.OutputFormatters.Insert(0,new VCardOutputFormatter());
+});
 
 
 //builder.Services.AddHttpClient<IhttpCL>
 var app = builder.Build();
+
+app.UseMiddleware<GlobalErrorHandlingMiddleWare>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
