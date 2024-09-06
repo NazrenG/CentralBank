@@ -24,5 +24,6 @@ namespace CentralBank.Entities.Data
         public DbSet<ValCurs> ValCurs { get; set; }
         public DbSet<ValType> ValTypes { get; set; }
         public DbSet<Valute> Valutes { get; set; }
+        public DbSet<History> Histories { get; set; }
     }
 }
