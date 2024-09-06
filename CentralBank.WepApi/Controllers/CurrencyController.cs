@@ -4,6 +4,7 @@ using CentralBank.Entities.Models;
 using CentralBank.WepApi.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,25 +34,25 @@ namespace CentralBank.WepApi.Controllers
         {
             var valCurs = await valCursService.GetAllAsync();
 
-            var valCursDto=valCurs.Select(v=>new ValCursDto
+            var valCursDto = valCurs.Select(v => new ValCursDto
             {
                 Date = v.Date,
                 Description = v.Description,
                 Name = v.Name,
-                ValTypes=v.ValType?.Select(p=>new ValTypeDto
+                ValTypes = v.ValType?.Select(p => new ValTypeDto
                 {
                     Type = p.Type,
-                    Valutes=p.Valute?.Select(x=>new ValuteDto
+                    Valutes = p.Valute?.Select(x => new ValuteDto
                     {
                         Code = x.Code,
                         Name = x.Name,
-                        Nominal=x.Nominal,
-                        Value=x.Value
+                        Nominal = x.Nominal,
+                        Value = x.Value
                     }).ToList()
                 }).ToList(),
-            }).ToList();    
+            }).ToList();
 
-            return Ok(valCursDto); 
+            return Ok(valCursDto);
         }
 
 
@@ -71,7 +72,7 @@ namespace CentralBank.WepApi.Controllers
                     Value = x.Value
                 }).ToList()
             }).ToList();
-            return Ok(valTypeDto);  
+            return Ok(valTypeDto);
         }
 
         [HttpGet("Valute")]
@@ -84,30 +85,144 @@ namespace CentralBank.WepApi.Controllers
                 Nominal = p.Nominal,
                 Code = p.Code,
                 Value = p.Value
-            }).ToList(); 
+            }).ToList();
 
 
-            return Ok(valueDto);   
+            return Ok(valueDto);
         }
 
-      
+
 
         // POST api/<CurrencyController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // POST Valute.
+        [HttpPost("Valute")]
+        public IActionResult Post([FromBody] ValuteDto value)
         {
+            var valute = new Valute
+            {
+                Name = value.Name,
+                Code = value.Code,
+                Nominal = value.Nominal,
+                Value = value.Value
+            };
+            valuteService.AddAsync(valute);
+            return Ok(valute);
+        }
+
+        // POST ValType.
+        [HttpPost("ValType")]
+        public IActionResult Post([FromBody] ValTypeDto value)
+        {
+            var valuteType = new ValType
+            {
+                Type = value.Type,
+            };
+            valuteType.Valute = value.Valutes.Select(v => { return new Valute { Name = v.Name, Code = v.Code, Nominal = v.Nominal, Value = v.Value }; }).ToList();
+            valTypeService.AddAsync(valuteType);
+            return Ok(valuteType);
+        }
+
+        // POST ValCurs.
+        [HttpPost("ValCurs")]
+        public async Task<IActionResult> Post([FromBody] ValCursPostDto value)
+        {
+            var cursType = new ValCurs
+            {
+                Name=value.Name,
+                Description=value.Description,
+                Date = value.Date,
+            };
+
+
+          
+
+           await  valCursService.AddAsync(cursType);
+            return Ok(cursType);
         }
 
         // PUT api/<CurrencyController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{id}/Value")]
+        public async Task<IActionResult> Put(int id, [FromBody] ValuteDto value)
         {
+            var valute = await valuteService.GetByIdAsync(id);
+            if (valute != null)
+            {
+                valute.Code = value.Code;
+                valute.Nominal = value.Nominal;
+                valute.Value = value.Value;
+                valute.Name = value.Name;
+                return Ok(valute);
+            }
+            return NotFound();
+
+        }
+        [HttpPut("{id}/ValType")]
+        public async Task<IActionResult> Put(int id, [FromBody] ValTypeDto value)
+        {
+           var valType=await valTypeService.GetByIdAsync(id);
+            if (valType != null) {
+                valType.Curs = valType.Curs;
+                //List<ValuteDto> List<Valute>-a cevrilir
+                valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
+                return Ok(valType);
+            }
+            return NotFound();
+        }
+
+        [HttpPut("{id}/ValCurs")]
+        public async Task<IActionResult> Put(int id, [FromBody] ValCursDto value)
+        {
+           var curs =await valCursService.GetByIdAsync(id);
+            if (curs != null) {
+
+                curs.Description = value.Description;
+                curs.Date= value.Date;
+                curs.Name = value.Name;
+                curs.ValType = value.ValTypes.Select(c => { return new ValType {Type=c.Type  }; }).ToList();
+                var val = curs.ValType;
+                var valDto = value.ValTypes;
+                
+                foreach (var item in val)
+                {
+                    foreach (var vd in valDto)
+                    {
+                        item.Valute = vd.Valutes.Select(x => { return new Valute { Name=x.Name,Code=x.Code,Nominal=x.Nominal,Value = x.Value}; }).ToList();
+                    }
+                }
+
+                curs.ValType = val;
+                return Ok(curs);
+            }
+
+            return NotFound();
         }
 
         // DELETE api/<CurrencyController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{id}/Valute")]
+        public async Task<IActionResult> Delete(int id)
         {
+            var valute = await valuteService.GetByIdAsync(id);
+            if (valute == null) return NotFound();
+            await valuteService.DeleteAsync(valute);
+            return NoContent();
+        }
+        
+        [HttpDelete("{id}/ValType")]
+        public async Task<IActionResult> DeleteValType(int id)
+        {
+            var valute = await valTypeService.GetByIdAsync(id);
+            if (valute == null) return NotFound();
+            await valTypeService.DeleteAsync(valute);
+            return NoContent();
+        } 
+
+        [HttpDelete("{id}/ValCurs")]
+        public async Task<IActionResult> DeleteValCurs(int id)
+        {
+            var valute = await valCursService.GetByIdAsync(id);
+            if (valute == null) return NotFound();
+            await valCursService.DeleteAsync(valute);
+            return Ok();
         }
     }
 }
