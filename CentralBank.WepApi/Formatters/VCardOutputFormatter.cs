@@ -17,7 +17,7 @@ namespace CentralBank.WepApi.Formatters
         {
             var response = context.HttpContext.Response;
             var sb = new StringBuilder();
-            sb.AppendLine("|  CODE |                 NAME                 |  NOMINAL   |    VALUE   |");
+            sb.AppendLine("|  ID   |  CODE |                     NAME                   |  NOMINAL   |    VALUE   |");
             if (context.Object is IEnumerable<ValuteDto> list)
             {
                 foreach (var item in list)
@@ -34,8 +34,8 @@ namespace CentralBank.WepApi.Formatters
 
         private void FormatVCard(StringBuilder sb, ValuteDto item)
         {
-            sb.AppendLine("--------------------------------------------------------------------------");
-            sb.AppendLine($"  {item.Code}    {item.Name?.PadRight(45,' ')}{item.Nominal?.PadRight(10,' ')}{item.Value?.PadRight(15,' ')}");
+            sb.AppendLine("------------------------------------------------------------------------------------------");
+            sb.AppendLine($" {item.Id}   {item.Code?.PadLeft(10,' ')}    {item.Name?.PadRight(45,' ')}{item.Nominal?.PadRight(10,' ')}{item.Value?.PadRight(15,' ')}");
             
         }
     }

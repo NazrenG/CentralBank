@@ -1,12 +1,8 @@
 ﻿using CentralBank.Business.Abstracts;
-using CentralBank.Entities.Data;
 using CentralBank.Entities.Models;
 using CentralBank.WepApi.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CentralBank.WepApi.Controllers
 {
@@ -25,9 +21,6 @@ namespace CentralBank.WepApi.Controllers
             this.valCursService = valCursService;
         }
 
-
-
-
         // GET: api/<CurrencyController>
         [HttpGet("ValCurs")]
         public async Task<IActionResult> GetAll()
@@ -36,6 +29,7 @@ namespace CentralBank.WepApi.Controllers
 
             var valCursDto = valCurs.Select(v => new ValCursDto
             {
+                Id = v.Id,
                 Date = v.Date,
                 Description = v.Description,
                 Name = v.Name,
@@ -53,14 +47,9 @@ namespace CentralBank.WepApi.Controllers
 
             var valTypeDto = valType.Select(p => new ValTypeDto
             {
+                Id = p.Id,
                 Type = p.Type,
-                //Valutes = p.Valute?.Select(x => new ValuteDto
-                //{
-                //    Code = x.Code,
-                //    Name = x.Name,
-                //    Nominal = x.Nominal,
-                //    Value = x.Value
-                //}).ToList()
+              
             }).ToList();
             return Ok(valTypeDto);
         }
@@ -71,6 +60,7 @@ namespace CentralBank.WepApi.Controllers
             var value = await valuteService.GetAllAsync();
             var valueDto = value.Select(p => new ValuteDto
             {
+                Id = p.Id,
                 Name = p.Name,
                 Nominal = p.Nominal,
                 Code = p.Code,
@@ -148,20 +138,23 @@ namespace CentralBank.WepApi.Controllers
                 valute.Nominal = value.Nominal;
                 valute.Value = value.Value;
                 valute.Name = value.Name;
+                await valuteService.UpdateAsync(valute);
                 return Ok(valute);
             }
+
             return NotFound();
 
         }
         [HttpPut("{id}/ValType")]
         public async Task<IActionResult> Put(int id, [FromBody] ValTypeDto value)
         {
-           var valType=await valTypeService.GetByIdAsync(id-1);
+           var valType=await valTypeService.GetByIdAsync(id);
             if (valType != null) {
-                valType.ValCursId = value.ValCursId;
+                valType.Type = value.Type;
+
                 //List<ValuteDto> List<Valute>-a cevrilir
-               // valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
-                await valTypeService.UpdateAsync(valType);
+                //valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
+            await valTypeService.UpdateAsync(valType);
                 return Ok(valType);
             }
             return NotFound();
@@ -176,19 +169,7 @@ namespace CentralBank.WepApi.Controllers
                 curs.Description = value.Description;
                 curs.Date= value.Date;
                 curs.Name = value.Name;
-                //curs.ValType = value.ValTypes.Select(c => { return new ValType {Type=c.Type  }; }).ToList();
-                //var val = curs.ValType;
-                //var valDto = value.ValTypes;
-                
-                //foreach (var item in val)
-                //{
-                //    foreach (var vd in valDto)
-                //    {
-                //        item.Valute = vd.Valutes.Select(x => { return new Valute { Name=x.Name,Code=x.Code,Nominal=x.Nominal,Value = x.Value}; }).ToList();
-                //    }
-                //}
-
-                //curs.ValType = val;
+           await valCursService.UpdateAsync(curs);
                 return Ok(curs);
             }
 
@@ -202,7 +183,7 @@ namespace CentralBank.WepApi.Controllers
             var valute = await valuteService.GetByIdAsync(id);
             if (valute == null) return NotFound();
             await valuteService.DeleteAsync(valute);
-            return NoContent();
+            return Ok();
         }
         
         [HttpDelete("{id}/ValType")]
@@ -211,7 +192,7 @@ namespace CentralBank.WepApi.Controllers
             var valute = await valTypeService.GetByIdAsync(id);
             if (valute == null) return NotFound();
             await valTypeService.DeleteAsync(valute);
-            return NoContent();
+            return Ok();
         } 
 
         [HttpDelete("{id}/ValCurs")]
