@@ -4,6 +4,7 @@ using CentralBank.Entities.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CentralBank.Entities.Migrations
 {
     [DbContext(typeof(CentralBankDbContext))]
-    partial class CentralBankDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240906211448_init2")]
+    partial class init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace CentralBank.Entities.Migrations
 
                     b.HasIndex("ValCursId");
 
-                    b.ToTable("Roots", (string)null);
+                    b.ToTable("Roots");
                 });
 
             modelBuilder.Entity("CentralBank.Entities.Models.ValCurs", b =>
@@ -75,7 +78,7 @@ namespace CentralBank.Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ValCurs", (string)null);
+                    b.ToTable("ValCurs");
                 });
 
             modelBuilder.Entity("CentralBank.Entities.Models.ValType", b =>
@@ -96,7 +99,7 @@ namespace CentralBank.Entities.Migrations
 
                     b.HasIndex("ValCursId");
 
-                    b.ToTable("ValTypes", (string)null);
+                    b.ToTable("ValTypes");
                 });
 
             modelBuilder.Entity("CentralBank.Entities.Models.Valute", b =>
@@ -126,7 +129,7 @@ namespace CentralBank.Entities.Migrations
 
                     b.HasIndex("ValTypeId");
 
-                    b.ToTable("Valutes", (string)null);
+                    b.ToTable("Valutes");
                 });
 
             modelBuilder.Entity("CentralBank.Entities.Models.Root", b =>

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CentralBank.Entities.Data;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,10 @@ namespace CentralBank.Business.Concretes
 
     public class FetchCurrencyService : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
-
+        private readonly IServiceProvider _serviceProvider; 
         public FetchCurrencyService(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            _serviceProvider = serviceProvider;  
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -25,6 +25,8 @@ namespace CentralBank.Business.Concretes
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var currencyService = scope.ServiceProvider.GetRequiredService<CurrencyService>();
+                    var centralBankDbContext = scope.ServiceProvider.GetRequiredService<CentralBankDbContext>();
+
                     var xmlData = await currencyService.GetXmlDataFromUrl();
 
                     if (!string.IsNullOrEmpty(xmlData))
@@ -32,8 +34,10 @@ namespace CentralBank.Business.Concretes
                         var root = currencyService.ParseXmlData(xmlData);
                         await currencyService.StoreCurrencyData(root);
                     }
+                    centralBankDbContext.Histories.Add(new Entities.Models.History { Created = DateTime.Now });
+                    await centralBankDbContext.SaveChangesAsync();
                 }
-
+            
                 // Wait 15 minutes
                 await Task.Delay(TimeSpan.FromMinutes(15), stoppingToken);
             }
