@@ -54,13 +54,13 @@ namespace CentralBank.WepApi.Controllers
             var valTypeDto = valType.Select(p => new ValTypeDto
             {
                 Type = p.Type,
-                Valutes = p.Valute?.Select(x => new ValuteDto
-                {
-                    Code = x.Code,
-                    Name = x.Name,
-                    Nominal = x.Nominal,
-                    Value = x.Value
-                }).ToList()
+                //Valutes = p.Valute?.Select(x => new ValuteDto
+                //{
+                //    Code = x.Code,
+                //    Name = x.Name,
+                //    Nominal = x.Nominal,
+                //    Value = x.Value
+                //}).ToList()
             }).ToList();
             return Ok(valTypeDto);
         }
@@ -156,11 +156,12 @@ namespace CentralBank.WepApi.Controllers
         [HttpPut("{id}/ValType")]
         public async Task<IActionResult> Put(int id, [FromBody] ValTypeDto value)
         {
-           var valType=await valTypeService.GetByIdAsync(id);
+           var valType=await valTypeService.GetByIdAsync(id-1);
             if (valType != null) {
-                valType.Curs = valType.Curs;
+                valType.ValCursId = value.ValCursId;
                 //List<ValuteDto> List<Valute>-a cevrilir
-                valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
+               // valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
+                await valTypeService.UpdateAsync(valType);
                 return Ok(valType);
             }
             return NotFound();
