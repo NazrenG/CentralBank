@@ -15,6 +15,6 @@ namespace CentralBank.Entities.Models
         public string? Name { get; set; }
         public string? Description { get; set; }
          //one-to-many
-        public List<ValType>? ValType { get; set; }
+        public virtual List<ValType>? ValType { get; set; }
     }
 }

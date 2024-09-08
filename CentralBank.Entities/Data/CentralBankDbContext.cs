@@ -20,6 +20,13 @@ namespace CentralBank.Entities.Data
                 optionsBuilder.UseLazyLoadingProxies();
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+          modelBuilder.Entity<ValType>().HasOne(i=>i.Curs).WithMany(i=>i.ValType).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Valute>().HasOne(i=>i.ValType).WithMany(i=>i.Valute).OnDelete(DeleteBehavior.Cascade);
+        }
+
         public DbSet<Root> Roots { get; set; }
         public DbSet<ValCurs> ValCurs { get; set; }
         public DbSet<ValType> ValTypes { get; set; }

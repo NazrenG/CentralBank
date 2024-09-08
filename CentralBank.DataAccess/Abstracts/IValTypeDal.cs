@@ -10,5 +10,6 @@ namespace CentralBank.DataAccess.Abstracts
 {
     public interface IValTypeDal:IEntityRepository<ValType>
     {
+
     }
 }

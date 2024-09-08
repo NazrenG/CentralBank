@@ -27,6 +27,10 @@ namespace CentralBank.Business.Concretes
         {
             await valuteDal.Delete(val);
         }
+        public async Task DeleteList(List<Valute> list)
+        {
+            await valuteDal.DeleteList(list);
+        }
 
         public async Task<List<Valute>> GetAllAsync()
         {

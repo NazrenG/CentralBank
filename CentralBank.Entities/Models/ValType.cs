@@ -14,8 +14,8 @@ namespace CentralBank.Entities.Models
         public string? Type { get; set; }
         //foreign key
         public int ValCursId {  get; set; }
-        public ValCurs Curs { get; set; }   
+        public virtual ValCurs Curs { get; set; }   
         // one-to-many
-        public List<Valute>? Valute { get; set; }
+        public virtual List<Valute>? Valute { get; set; }
     }
 }

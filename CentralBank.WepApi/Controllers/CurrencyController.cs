@@ -39,17 +39,7 @@ namespace CentralBank.WepApi.Controllers
                 Date = v.Date,
                 Description = v.Description,
                 Name = v.Name,
-                ValTypes = v.ValType?.Select(p => new ValTypeDto
-                {
-                    Type = p.Type,
-                    Valutes = p.Valute?.Select(x => new ValuteDto
-                    {
-                        Code = x.Code,
-                        Name = x.Name,
-                        Nominal = x.Nominal,
-                        Value = x.Value
-                    }).ToList()
-                }).ToList(),
+                ValTypeCount = v.ValType == null ? 0 : v.ValType.Count()
             }).ToList();
 
             return Ok(valCursDto);
@@ -76,7 +66,7 @@ namespace CentralBank.WepApi.Controllers
         }
 
         [HttpGet("Valute")]
-        public async Task<IActionResult> GetValCurs()
+        public async Task<IActionResult> GetValute()
         {
             var value = await valuteService.GetAllAsync();
             var valueDto = value.Select(p => new ValuteDto
@@ -96,29 +86,37 @@ namespace CentralBank.WepApi.Controllers
         // POST api/<CurrencyController>
         // POST Valute.
         [HttpPost("Valute")]
-        public IActionResult Post([FromBody] ValuteDto value)
+        public async Task<IActionResult> Post([FromBody] ValutePostDto value)
         {
             var valute = new Valute
             {
                 Name = value.Name,
                 Code = value.Code,
                 Nominal = value.Nominal,
-                Value = value.Value
+                Value = value.Value,
+                ValTypeId= value.ValTypeId
             };
-            valuteService.AddAsync(valute);
+           await valuteService.AddAsync(valute);
+            //var valTyp = await valTypeService.GetByIdAsync(value.ValTypeId);
+            //valTyp.Valute.Add(valute);
+
             return Ok(valute);
         }
 
         // POST ValType.
         [HttpPost("ValType")]
-        public IActionResult Post([FromBody] ValTypeDto value)
+        public async Task<IActionResult> Post([FromBody] ValTypePostDto value)
         {
             var valuteType = new ValType
             {
                 Type = value.Type,
+                ValCursId = value.ValCursId,
             };
-            valuteType.Valute = value.Valutes.Select(v => { return new Valute { Name = v.Name, Code = v.Code, Nominal = v.Nominal, Value = v.Value }; }).ToList();
-            valTypeService.AddAsync(valuteType);
+            
+           await valTypeService.AddAsync(valuteType);
+            //var valcurs = await valCursService.GetByIdAsync(value.ValCursId);
+            //valcurs.ValType.Add(valuteType);
+
             return Ok(valuteType);
         }
 
@@ -133,16 +131,15 @@ namespace CentralBank.WepApi.Controllers
                 Date = value.Date,
             };
 
-
-          
-
            await  valCursService.AddAsync(cursType);
+            
+
             return Ok(cursType);
         }
 
         // PUT api/<CurrencyController>/5
         [HttpPut("{id}/Value")]
-        public async Task<IActionResult> Put(int id, [FromBody] ValuteDto value)
+        public async Task<IActionResult> Put(int id, [FromBody] ValutePostDto value)
         {
             var valute = await valuteService.GetByIdAsync(id);
             if (valute != null)
@@ -178,19 +175,19 @@ namespace CentralBank.WepApi.Controllers
                 curs.Description = value.Description;
                 curs.Date= value.Date;
                 curs.Name = value.Name;
-                curs.ValType = value.ValTypes.Select(c => { return new ValType {Type=c.Type  }; }).ToList();
-                var val = curs.ValType;
-                var valDto = value.ValTypes;
+                //curs.ValType = value.ValTypes.Select(c => { return new ValType {Type=c.Type  }; }).ToList();
+                //var val = curs.ValType;
+                //var valDto = value.ValTypes;
                 
-                foreach (var item in val)
-                {
-                    foreach (var vd in valDto)
-                    {
-                        item.Valute = vd.Valutes.Select(x => { return new Valute { Name=x.Name,Code=x.Code,Nominal=x.Nominal,Value = x.Value}; }).ToList();
-                    }
-                }
+                //foreach (var item in val)
+                //{
+                //    foreach (var vd in valDto)
+                //    {
+                //        item.Valute = vd.Valutes.Select(x => { return new Valute { Name=x.Name,Code=x.Code,Nominal=x.Nominal,Value = x.Value}; }).ToList();
+                //    }
+                //}
 
-                curs.ValType = val;
+                //curs.ValType = val;
                 return Ok(curs);
             }
 

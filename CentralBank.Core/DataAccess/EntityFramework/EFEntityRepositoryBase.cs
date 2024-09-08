@@ -29,6 +29,17 @@ namespace CentralBank.Core.DataAccess.EntityFramework
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteList(List<TEntity> entities)
+        {
+            foreach (var entity in entities)
+            {
+                var deletedEntity = _context.Entry(entity);
+                deletedEntity.State = EntityState.Deleted;
+
+            }
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<TEntity> Get(Expression<Func<TEntity, bool>> filter)
         {
             return await _context.Set<TEntity>().SingleOrDefaultAsync(filter);

@@ -16,6 +16,6 @@ namespace CentralBank.Entities.Models
         public string? Code { get; set; }
         //foreign key
         public int ValTypeId { get; set; }
-        public ValType ValType { get; set; }
+        public virtual ValType ValType { get; set; }
     }
 }

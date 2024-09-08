@@ -12,7 +12,7 @@ namespace CentralBank.Core.DataAccess
     {///Helllooooo
         Task<T> Get(Expression<Func<T, bool>> filter);
         Task<List<T>> GetList(Expression<Func<T, bool>> filter = null);
-
+        Task DeleteList(List<T> entities);
         Task Delete(T entity);
         Task Add(T entity);
         Task Update(T entity);

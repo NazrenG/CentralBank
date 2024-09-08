@@ -12,6 +12,7 @@ namespace CentralBank.Business.Concretes
     public class ValTypeService : IValTypeService
     {
         private readonly IValTypeDal valTypeDal;
+        private readonly IValuteDal valuteDal;
 
         public ValTypeService(IValTypeDal valTypeDal)
         {
@@ -26,6 +27,16 @@ namespace CentralBank.Business.Concretes
         public async Task DeleteAsync(ValType val)
         {
            await valTypeDal.Delete(val);
+            //var list = await valuteDal.GetList();
+            //var sortedList=list.Where(v=>v.Id == val.Id).ToList();
+            //await valuteDal.DeleteList(sortedList);
+        }
+
+        public async Task DeleteList(List<ValType> list)
+        {
+           await valTypeDal.DeleteList(list);
+
+            
         }
 
         public async Task<List<ValType>> GetAllAsync()

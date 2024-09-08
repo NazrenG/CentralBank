@@ -12,6 +12,7 @@ namespace CentralBank.Business.Concretes
     public class ValCursService : IValCursService
     {
         private readonly IValCursDal valCursDal;
+        private readonly IValTypeDal valTypeDal;
 
         public ValCursService(IValCursDal valCursDal)
         {
@@ -26,6 +27,9 @@ namespace CentralBank.Business.Concretes
         public async Task DeleteAsync(ValCurs val)
         {
             await valCursDal.Delete(val);
+            //var list = await valTypeDal.GetList();
+            //var sortedList=list.Where(l=>l.Id==val.Id).ToList();
+            //await valTypeDal.DeleteList(sortedList);
         }
 
         public async Task<List<ValCurs>> GetAllAsync()

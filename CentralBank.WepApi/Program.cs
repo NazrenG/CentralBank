@@ -43,10 +43,10 @@ builder.Services.AddDbContext<CentralBankDbContext>(opt =>
     opt.UseSqlServer(conn);
 });
 
-builder.Services.AddControllers(opt =>
-{
-    opt.OutputFormatters.Insert(0,new VCardOutputFormatter());
-});
+//builder.Services.AddControllers(opt =>
+//{
+//    opt.OutputFormatters.Insert(0, new VCardOutputFormatter());
+//});
 
 
 //builder.Services.AddHttpClient<IhttpCL>

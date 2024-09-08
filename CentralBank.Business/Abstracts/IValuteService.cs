@@ -13,6 +13,7 @@ namespace CentralBank.Business.Abstracts
         Task AddAsync(Valute val);
         Task UpdateAsync(Valute val);
         Task DeleteAsync(Valute val);
+        Task DeleteList(List<Valute> list);
         Task<Valute> GetByIdAsync(int id);
     }
 }
