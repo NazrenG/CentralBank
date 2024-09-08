@@ -54,13 +54,7 @@ namespace CentralBank.WepApi.Controllers
             var valTypeDto = valType.Select(p => new ValTypeDto
             {
                 Type = p.Type,
-                Valutes = p.Valute?.Select(x => new ValuteDto
-                {
-                    Code = x.Code,
-                    Name = x.Name,
-                    Nominal = x.Nominal,
-                    Value = x.Value
-                }).ToList()
+              
             }).ToList();
             return Ok(valTypeDto);
         }
@@ -148,8 +142,10 @@ namespace CentralBank.WepApi.Controllers
                 valute.Nominal = value.Nominal;
                 valute.Value = value.Value;
                 valute.Name = value.Name;
+                await valuteService.UpdateAsync(valute);
                 return Ok(valute);
             }
+
             return NotFound();
 
         }
@@ -158,9 +154,11 @@ namespace CentralBank.WepApi.Controllers
         {
            var valType=await valTypeService.GetByIdAsync(id);
             if (valType != null) {
-                valType.Curs = valType.Curs;
+                valType.Type = value.Type;
+
                 //List<ValuteDto> List<Valute>-a cevrilir
-                valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
+                //valType.Valute = value.Valutes.Select(v => { return new Valute {Name=v.Name,Code=v.Code,Nominal=v.Nominal,Value=v.Value  }; }).ToList();
+            await valTypeService.UpdateAsync(valType);
                 return Ok(valType);
             }
             return NotFound();
@@ -175,19 +173,7 @@ namespace CentralBank.WepApi.Controllers
                 curs.Description = value.Description;
                 curs.Date= value.Date;
                 curs.Name = value.Name;
-                //curs.ValType = value.ValTypes.Select(c => { return new ValType {Type=c.Type  }; }).ToList();
-                //var val = curs.ValType;
-                //var valDto = value.ValTypes;
-                
-                //foreach (var item in val)
-                //{
-                //    foreach (var vd in valDto)
-                //    {
-                //        item.Valute = vd.Valutes.Select(x => { return new Valute { Name=x.Name,Code=x.Code,Nominal=x.Nominal,Value = x.Value}; }).ToList();
-                //    }
-                //}
-
-                //curs.ValType = val;
+           await valCursService.UpdateAsync(curs);
                 return Ok(curs);
             }
 
